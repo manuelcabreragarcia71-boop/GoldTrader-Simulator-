@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>GoldTrader Simulator - XAUUSD Paper Trading</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-top">
+            <h1 class="app-title">GoldTrader Simulator</h1>
+            <div class="account-balance" id="headerBalance">$10,000</div>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <span class="stat-label">Equity</span>
+                <span class="stat-value" id="headerEquity">$10,000</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Margin</span>
+                <span class="stat-value" id="headerMargin">$10,000</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">P&amp;L</span>
+                <span class="stat-value" id="headerPL">$0.00</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+        <!-- Tab 1: Gráfico (Chart) -->
+        <section id="tab-chart" class="tab-content active">
+            <div class="chart-header">
+                <div class="price-info">
+                    <div class="symbol">XAUUSD</div>
+                    <div class="current-price" id="currentPrice">4,085.50</div>
+                    <div class="price-change positive" id="priceChange">+0.00%</div>
+                </div>
+            </div>
+            
+            <div class="timeframe-selector">
+                <button class="tf-btn" data-tf="1M">1M</button>
+                <button class="tf-btn" data-tf="5M">5M</button>
+                <button class="tf-btn active" data-tf="15M">15M</button>
+                <button class="tf-btn" data-tf="1H">1H</button>
+                <button class="tf-btn" data-tf="4H">4H</button>
+                <button class="tf-btn" data-tf="1D">1D</button>
+            </div>
+
+            <div class="chart-wrapper">
+                <canvas id="mainChart"></canvas>
+            </div>
+
+            <div class="indicator-label">Indicadores: MA20 (azul) | MA50 (naranja)</div>
+
+            <div class="rsi-wrapper">
+                <div class="rsi-label">RSI (14)</div>
+                <canvas id="rsiChart"></canvas>
+            </div>
+
+            <button class="fab" onclick="switchTab('trade')">💱 Operar</button>
+        </section>
+
+        <!-- Tab 2: Operar (Trade) -->
+        <section id="tab-trade" class="tab-content">
+            <h2 class="tab-title">Panel de Trading</h2>
+            
+            <div class="trade-form">
+                <div class="form-group">
+                    <label class="form-label">Tamaño del Lote</label>
+                    <div class="input-stepper">
+                        <button class="stepper-btn" onclick="adjustLot(-0.01)">−</button>
+                        <input type="number" id="lotSize" class="form-input" value="0.10" step="0.01" min="0.01" max="10">
+                        <button class="stepper-btn" onclick="adjustLot(0.01)">+</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Stop Loss (pips)</label>
+                    <input type="number" id="stopLoss" class="form-input" value="20" min="1" inputmode="numeric">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Take Profit (pips)</label>
+                    <input type="number" id="takeProfit" class="form-input" value="40" min="1" inputmode="numeric">
+                </div>
+
+                <div class="validation-box" id="validationBox">
+                    <div class="validation-title">Validación en Tiempo Real</div>
+                    <div class="validation-content" id="validationContent">
+                        <div class="validation-item">
+                            <span>Precio Actual:</span>
+                            <span id="valPrice">4,085.50</span>
+                        </div>
+                        <div class="validation-item">
+                            <span>Risk/Reward:</span>
+                            <span id="valRR">1:2.0</span>
+                        </div>
+                        <div class="validation-item">
+                            <span>Riesgo de Cuenta:</span>
+                            <span id="valRisk">2.0%</span>
+                        </div>
+                    </div>
+                    <div class="validation-status good" id="validationStatus">
+                        ✅ Parámetros buenos - Listo para operar
+                    </div>
+                </div>
+
+                <div class="trade-buttons">
+                    <button class="trade-btn buy" onclick="openTrade('BUY')">⬆️ BUY</button>
+                    <button class="trade-btn sell" onclick="openTrade('SELL')">⬇️ SELL</button>
+                </div>
+
+                <button class="close-all-btn" onclick="closeAllPositions()">✕ Cerrar Todas las Posiciones</button>
+
+                <div id="tradeMessage" class="trade-message"></div>
+            </div>
+        </section>
+
+        <!-- Tab 3: Posiciones (Positions) -->
+        <section id="tab-positions" class="tab-content">
+            <h2 class="tab-title">Posiciones Abiertas</h2>
+            <div class="positions-summary" id="positionsSummary">
+                Sin posiciones abiertas
+            </div>
+            <div class="positions-list" id="positionsList">
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <div class="empty-text">No tienes posiciones abiertas</div>
+                    <div class="empty-hint">Ve a la pestaña "Operar" para abrir una posición</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 4: Historial (History) -->
+        <section id="tab-history" class="tab-content">
+            <h2 class="tab-title">Historial de Operaciones</h2>
+            <div class="history-stats" id="historyStats" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-label">Total Trades</div>
+                    <div class="stat-value" id="statTotalTrades">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Win Rate</div>
+                    <div class="stat-value" id="statWinRate">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total P&amp;L</div>
+                    <div class="stat-value" id="statTotalPL">$0</div>
+                </div>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <div class="empty-text">Aún no hay operaciones cerradas</div>
+                    <div class="empty-hint">Tu historial aparecerá aquí</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 5: Coach -->
+        <section id="tab-coach" class="tab-content">
+            <h2 class="tab-title">🎯 Coach en Tiempo Real</h2>
+            
+            <div class="coach-section">
+                <h3 class="coach-section-title">📊 Análisis de Mercado</h3>
+                <div class="analysis-grid">
+                    <div class="analysis-item">
+                        <span class="label">Tendencia:</span>
+                        <span class="value" id="coachTrend">CALCULANDO</span>
+                    </div>
+                    <div class="analysis-item">
+                        <span class="label">Fuerza:</span>
+                        <span class="value" id="coachStrength">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <span class="label">Volatilidad:</span>
+                        <span class="value" id="coachVolatility">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="coach-section">
+                <h3 class="coach-section-title">📈 Señales Técnicas</h3>
+                <div id="coachSignals" class="coach-signals">
+                    <div class="signal-item">Analizando indicadores...</div>
+                </div>
+            </div>
+
+            <div class="coach-section">
+                <h3 class="coach-section-title">📋 Guía Paso a Paso</h3>
+                <div id="coachGuide" class="coach-guide">
+                    <div class="guide-step">Esperando análisis...</div>
+                </div>
+            </div>
+
+            <div class="coach-section">
+                <h3 class="coach-section-title">💰 Estado de Riesgo</h3>
+                <div id="coachRisk" class="coach-risk">
+                    <div class="risk-item">
+                        <span>Margen Disponible:</span>
+                        <span id="riskMargin">$10,000</span>
+                    </div>
+                    <div class="risk-item">
+                        <span>Lote Seguro Max:</span>
+                        <span id="riskSafeLot">1.00</span>
+                    </div>
+                    <div class="risk-item">
+                        <span>Riesgo Actual:</span>
+                        <span id="riskCurrent">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="coach-section">
+                <h3 class="coach-section-title">🔔 Alertas Recientes</h3>
+                <div id="coachAlerts" class="coach-alerts">
+                    <div class="alert-empty">Sin alertas recientes</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-tab="chart" onclick="switchTab('chart')">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Gráfico</span>
+        </button>
+        <button class="nav-btn" data-tab="trade" onclick="switchTab('trade')">
+            <span class="nav-icon">💱</span>
+            <span class="nav-label">Operar</span>
+        </button>
+        <button class="nav-btn" data-tab="positions" onclick="switchTab('positions')">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Posiciones</span>
+        </button>
+        <button class="nav-btn" data-tab="history" onclick="switchTab('history')">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">Historial</span>
+        </button>
+        <button class="nav-btn" data-tab="coach" onclick="switchTab('coach')">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Coach</span>
+        </button>
+    </nav>
+
+    <!-- Modify Modal -->
+    <div id="modifyModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeModifyModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Modificar Posición</h3>
+                <button class="modal-close" onclick="closeModifyModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nuevo Stop Loss (pips)</label>
+                    <input type="number" id="modifySL" class="form-input" inputmode="numeric">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nuevo Take Profit (pips)</label>
+                    <input type="number" id="modifyTP" class="form-input" inputmode="numeric">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModifyModal()">Cancelar</button>
+                <button class="modal-btn primary" onclick="confirmModify()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-credit">Built by Manuel Cabrera Garcia <a href="https://twitter.com/maanucg02" target="_blank">@maanucg02</a></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
