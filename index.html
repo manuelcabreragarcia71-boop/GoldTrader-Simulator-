@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaTrader Simulador - XAUUSD Paper Trading</title>
+    <style>
+        :root {
+  --color-white: rgba(255, 255, 255, 1);
+  --color-black: rgba(0, 0, 0, 1);
+  --color-cream-50: rgba(252, 252, 249, 1);
+  --color-cream-100: rgba(255, 255, 253, 1);
+  --color-gray-200: rgba(245, 245, 245, 1);
+  --color-gray-300: rgba(167, 169, 169, 1);
+  --color-gray-400: rgba(119, 124, 124, 1);
+  --color-slate-500: rgba(98, 108, 113, 1);
+  --color-brown-600: rgba(94, 82, 64, 1);
+  --color-charcoal-700: rgba(31, 33, 33, 1);
+  --color-charcoal-800: rgba(38, 40, 40, 1);
+  --color-slate-900: rgba(19, 52, 59, 1);
+  --color-teal-300: rgba(50, 184, 198, 1);
+  --color-teal-400: rgba(45, 166, 178, 1);
+  --color-teal-500: rgba(33, 128, 141, 1);
+  --color-teal-600: rgba(29, 116, 128, 1);
+  --color-teal-700: rgba(26, 104, 115, 1);
+  --color-teal-800: rgba(41, 150, 161, 1);
+  --color-red-400: rgba(255, 84, 89, 1);
+  --color-red-500: rgba(192, 21, 47, 1);
+  --color-orange-400: rgba(230, 129, 97, 1);
+  --color-orange-500: rgba(168, 75, 47, 1);
+
+  --color-brown-600-rgb: 94, 82, 64;
+  --color-teal-500-rgb: 33, 128, 141;
+  --color-slate-900-rgb: 19, 52, 59;
+  --color-slate-500-rgb: 98, 108, 113;
+  --color-red-500-rgb: 192, 21, 47;
+  --color-red-400-rgb: 255, 84, 89;
+  --color-orange-500-rgb: 168, 75, 47;
+  --color-orange-400-rgb: 230, 129, 97;
+
+  --color-bg-1: rgba(59, 130, 246, 0.08);
+  --color-bg-2: rgba(245, 158, 11, 0.08);
+  --color-bg-3: rgba(34, 197, 94, 0.08);
+  --color-bg-4: rgba(239, 68, 68, 0.08);
+  --color-bg-5: rgba(147, 51, 234, 0.08);
+  --color-bg-6: rgba(249, 115, 22, 0.08);
+  --color-bg-7: rgba(236, 72, 153, 0.08);
+  --color-bg-8: rgba(6, 182, 212, 0.08);
+
+  --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+  --font-size-4xl: 30px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 550;
+  --font-weight-bold: 600;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --letter-spacing-tight: -0.01em;
+
+  --space-0: 0;
+  --space-1: 1px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --mt-bg-dark: #1a1d21;
+  --mt-bg-panel: #252930;
+  --mt-bg-input: #1e2228;
+  --mt-border: #2d3139;
+  --mt-text: #e1e3e6;
+  --mt-text-dim: #8b8d91;
+  --mt-green: #26a69a;
+  --mt-red: #ef5350;
+  --mt-blue: #42a5f5;
+  --mt-orange: #ff9800;
+}
+
+@font-face {
+  font-family: 'FKGroteskNeue';
+  src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family-base);
+    background: var(--mt-bg-dark);
+    color: var(--mt-text);
+    overflow: hidden;
+    height: 100vh;
+    padding-bottom: 32px;
+}
+
+.app-container {
+    display: grid;
+    grid-template-columns: 320px 1fr 350px;
+    grid-template-rows: auto 1fr 1fr;
+    gap: var(--space-8);
+    height: 100vh;
+    padding: var(--space-8);
+}
+
+.panel {
+    background: var(--mt-bg-panel);
+    border: 1px solid var(--mt-border);
+    border-radius: var(--radius-base);
+    padding: var(--space-16);
+    overflow: auto;
+}
+
+.coach-panel {
+    grid-column: 3;
+    grid-row: 1 / 4;
+    max-height: calc(100vh - 16px);
+    overflow-y: auto;
+}
+
+.account-panel {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.trading-panel {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.positions-panel {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+.chart-panel {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+}
+
+.history-panel {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+.panel-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-16);
+    color: var(--mt-text);
+    border-bottom: 1px solid var(--mt-border);
+    padding-bottom: var(--space-8);
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+}
+
+.info-label {
+    color: var(--mt-text-dim);
+}
+
+.info-value {
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-family-mono);
+}
+
+.info-value.positive {
+    color: var(--mt-green);
+}
+
+.info-value.negative {
+    color: var(--mt-red);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-16);
+    flex-wrap: wrap;
+    gap: var(--space-12);
+}
+
+.chart-title-section {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+}
+
+.symbol-name {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+}
+
+.current-price {
+    font-size: var(--font-size-xl);
+    font-family: var(--font-family-mono);
+    color: var(--mt-green);
+}
+
+.price-change {
+    font-size: var(--font-size-sm);
+    padding: var(--space-4) var(--space-8);
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.price-change.positive {
+    background: rgba(38, 166, 154, 0.2);
+    color: var(--mt-green);
+}
+
+.price-change.negative {
+    background: rgba(239, 83, 80, 0.2);
+    color: var(--mt-red);
+}
+
+.timeframe-selector {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.timeframe-btn {
+    padding: var(--space-6) var(--space-12);
+    background: var(--mt-bg-input);
+    border: 1px solid var(--mt-border);
+    border-radius: var(--radius-sm);
+    color: var(--mt-text-dim);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.timeframe-btn:hover {
+    background: var(--mt-bg-panel);
+    color: var(--mt-text);
+}
+
+.timeframe-btn.active {
+    background: var(--mt-blue);
+    color: white;
+    border-color: var(--mt-blue);
+}
+
+.chart-container {
+    flex: 1;
+    min-height: 400px;
+    position: relative;
+    background: var(--mt-bg-input);
+    border-radius: var(--radius-base);
+    padding: var(--space-16);
+}
+
+.chart-canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.form-group {
+    margin-bottom: var(--space-16);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--space-6);
+    font-size: var(--font-size-sm);
+    color: var(--mt-text-dim);
+    font-weight: var(--font-weight-medium);
+}
+
+.form-input {
+    width: 100%;
+    padding: var(--space-8) var(--space-12);
+    background: var(--mt-bg-input);
+    border: 1px solid var(--mt-border);
+    border-radius: var(--radius-base);
+    color: var(--mt-text);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family-mono);
+    transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--mt-blue);
+}
+
+.tooltip-icon {
+    display: inline-block;
+    margin-left: var(--space-4);
+    color: var(--mt-blue);
+    cursor: help;
+    font-size: var(--font-size-xs);
+    width: 14px;
+    height: 14px;
+    text-align: center;
+    border: 1px solid var(--mt-blue);
+    border-radius: 50%;
+    line-height: 12px;
+}
+
+.trade-buttons {
+    display: flex;
+    gap: var(--space-8);
+    margin-bottom: var(--space-16);
+}
+
+.trade-btn {
+    flex: 1;
+    padding: var(--space-12);
+    border: none;
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+}
+
+.trade-btn.buy {
+    background: var(--mt-green);
+    color: white;
+}
+
+.trade-btn.buy:hover {
+    background: #1e8b7f;
+    transform: translateY(-1px);
+}
+
+.trade-btn.sell {
+    background: var(--mt-red);
+    color: white;
+}
+
+.trade-btn.sell:hover {
+    background: #d43d3a;
+    transform: translateY(-1px);
+}
+
+.trade-btn.close-all {
+    background: var(--mt-bg-input);
+    border: 1px solid var(--mt-border);
+    color: var(--mt-text);
+    width: 100%;
+}
+
+.trade-btn.close-all:hover {
+    background: var(--mt-border);
+}
+
+.message {
+    padding: var(--space-12);
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-8);
+    border: 1px solid transparent;
+}
+
+.message.error {
+    background: rgba(239, 83, 80, 0.1);
+    border-color: var(--mt-red);
+    color: var(--mt-red);
+}
+
+.message.success {
+    background: rgba(38, 166, 154, 0.1);
+    border-color: var(--mt-green);
+    color: var(--mt-green);
+}
+
+.message.info {
+    background: rgba(66, 165, 245, 0.1);
+    border-color: var(--mt-blue);
+    color: var(--mt-blue);
+}
+
+.message.warning {
+    background: rgba(255, 152, 0, 0.1);
+    border-color: var(--mt-orange);
+    color: var(--mt-orange);
+}
+
+.positions-table, .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-xs);
+}
+
+.positions-table th,
+.history-table th {
+    background: var(--mt-bg-input);
+    padding: var(--space-8);
+    text-align: left;
+    font-weight: var(--font-weight-semibold);
+    color: var(--mt-text-dim);
+    border-bottom: 1px solid var(--mt-border);
+}
+
+.positions-table td,
+.history-table td {
+    padding: var(--space-8);
+    border-bottom: 1px solid var(--mt-border);
+    font-family: var(--font-family-mono);
+}
+
+.positions-table tr:hover,
+.history-table tr:hover {
+    background: var(--mt-bg-input);
+}
+
+.profit-positive {
+    color: var(--mt-green);
+    font-weight: var(--font-weight-medium);
+}
+
+.profit-negative {
+    color: var(--mt-red);
+    font-weight: var(--font-weight-medium);
+}
+
+.type-badge {
+    padding: var(--space-2) var(--space-6);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+}
+
+.type-badge.buy {
+    background: rgba(38, 166, 154, 0.2);
+    color: var(--mt-green);
+}
+
+.type-badge.sell {
+    background: rgba(239, 83, 80, 0.2);
+    color: var(--mt-red);
+}
+
+.action-btn {
+    padding: var(--space-4) var(--space-8);
+    background: var(--mt-bg-input);
+    border: 1px solid var(--mt-border);
+    border-radius: var(--radius-sm);
+    color: var(--mt-text);
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.action-btn:hover {
+    background: var(--mt-border);
+}
+
+.action-btn.danger {
+    color: var(--mt-red);
+    border-color: var(--mt-red);
+}
+
+.action-btn.danger:hover {
+    background: rgba(239, 83, 80, 0.1);
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--space-32);
+    color: var(--mt-text-dim);
+    font-size: var(--font-size-sm);
+}
+
+.stats-summary {
+    display: flex;
+    justify-content: space-around;
+    margin-top: var(--space-16);
+    padding-top: var(--space-16);
+    border-top: 1px solid var(--mt-border);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    font-size: var(--font-size-xs);
+    color: var(--mt-text-dim);
+    margin-bottom: var(--space-4);
+}
+
+.stat-value {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family-mono);
+}
+
+.educational-tip {
+    margin-top: var(--space-16);
+    padding: var(--space-12);
+    background: rgba(66, 165, 245, 0.05);
+    border-left: 3px solid var(--mt-blue);
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-sm);
+    color: var(--mt-text-dim);
+    font-style: italic;
+}
+
+.modify-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--mt-bg-panel);
+    border: 1px solid var(--mt-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-24);
+    min-width: 400px;
+    max-width: 500px;
+}
+
+.modal-header {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-16);
+    color: var(--mt-text);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: var(--space-8);
+    margin-top: var(--space-16);
+}
+
+.modal-btn {
+    flex: 1;
+    padding: var(--space-10);
+    border: none;
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.modal-btn.primary {
+    background: var(--mt-blue);
+    color: white;
+}
+
+.modal-btn.primary:hover {
+    background: #3694d9;
+}
+
+.modal-btn.secondary {
+    background: var(--mt-bg-input);
+    border: 1px solid var(--mt-border);
+    color: var(--mt-text);
+}
+
+.modal-btn.secondary:hover {
+    background: var(--mt-border);
+}
+
+@media (max-width: 1200px) {
+    .app-container {
+        grid-template-columns: 280px 1fr;
+    }
+}
+
+@media (max-width: 1400px) {
+    .app-container {
+        grid-template-columns: 300px 1fr;
+        grid-template-rows: auto auto 1fr 1fr;
+    }
+    
+    .coach-panel {
+        grid-column: 1 / 3;
+        grid-row: 1;
+        max-height: 400px;
+    }
+    
+    .account-panel {
+        grid-row: 2;
+    }
+    
+    .trading-panel {
+        grid-row: 3;
+    }
+    
+    .positions-panel {
+        grid-row: 4;
+    }
+    
+    .chart-panel {
+        grid-column: 2;
+        grid-row: 2 / 4;
+    }
+    
+    .history-panel {
+        grid-column: 2;
+        grid-row: 4;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto auto auto;
+    }
+    
+    .coach-panel {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    
+    .chart-panel {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    
+    .trading-panel {
+        grid-row: 3;
+    }
+    
+    .positions-panel {
+        grid-row: 4;
+    }
+    
+    .history-panel {
+        grid-row: 5;
+    }
+    
+    .account-panel {
+        grid-row: 6;
+    }
+}
+
+/* Creator Footer */
+.creator-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--mt-bg-panel);
+    border-top: 1px solid var(--mt-border);
+    padding: var(--space-8) var(--space-16);
+    text-align: center;
+    z-index: 999;
+}
+
+.footer-text {
+    font-size: var(--font-size-xs);
+    color: var(--mt-text-dim);
+    font-weight: var(--font-weight-normal);
+}
+
+.footer-link {
+    color: var(--mt-blue);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.footer-link:hover {
+    color: var(--mt-teal-300);
+    text-decoration: underline;
+}
+/* Coach Panel Styles */
+.coach-panel {
+    background: linear-gradient(135deg, var(--mt-bg-panel) 0%, #2a2f38 100%);
+}
+
+.coach-avatar {
+    text-align: center;
+    font-size: 48px;
+    margin: var(--space-16) 0;
+}
+
+.coach-section {
+    margin-bottom: var(--space-20);
+    padding: var(--space-12);
+    background: var(--mt-bg-input);
+    border-radius: var(--radius-base);
+    border: 1px solid var(--mt-border);
+}
+
+.coach-section-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-12);
+    color: var(--mt-blue);
+}
+
+.market-analysis {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.analysis-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+}
+
+.analysis-label {
+    color: var(--mt-text-dim);
+}
+
+.analysis-value {
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family-mono);
+}
+
+.analysis-value.uptrend {
+    color: var(--mt-green);
+}
+
+.analysis-value.downtrend {
+    color: var(--mt-red);
+}
+
+.analysis-value.sideways {
+    color: var(--mt-orange);
+}
+
+.technical-signals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.signal-item {
+    padding: var(--space-8);
+    background: var(--mt-bg-panel);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    border-left: 3px solid var(--mt-blue);
+}
+
+.signal-item.buy {
+    border-left-color: var(--mt-green);
+    background: rgba(38, 166, 154, 0.05);
+}
+
+.signal-item.sell {
+    border-left-color: var(--mt-red);
+    background: rgba(239, 83, 80, 0.05);
+}
+
+.signal-item.warning {
+    border-left-color: var(--mt-orange);
+    background: rgba(255, 152, 0, 0.05);
+}
+
+.step-guide {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.step-item {
+    padding: var(--space-6) var(--space-8);
+    background: var(--mt-bg-panel);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    line-height: 1.5;
+}
+
+.step-item.completed {
+    color: var(--mt-green);
+}
+
+.step-item.action {
+    background: rgba(66, 165, 245, 0.1);
+    border: 1px solid var(--mt-blue);
+    font-weight: var(--font-weight-medium);
+}
+
+.step-item.warning {
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid var(--mt-orange);
+}
+
+.risk-management {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.risk-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-xs);
+    padding: var(--space-4) 0;
+}
+
+.risk-label {
+    color: var(--mt-text-dim);
+}
+
+.risk-value {
+    font-family: var(--font-family-mono);
+    font-weight: var(--font-weight-medium);
+}
+
+.risk-value.safe {
+    color: var(--mt-green);
+}
+
+.risk-value.warning {
+    color: var(--mt-orange);
+}
+
+.risk-value.danger {
+    color: var(--mt-red);
+}
+
+.entry-validation {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    font-size: var(--font-size-xs);
+}
+
+.validation-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-4) 0;
+}
+
+.validation-assessment {
+    margin-top: var(--space-8);
+    padding: var(--space-8);
+    background: var(--mt-bg-panel);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    line-height: 1.5;
+}
+
+.validation-assessment.good {
+    border-left: 3px solid var(--mt-green);
+}
+
+.validation-assessment.bad {
+    border-left: 3px solid var(--mt-red);
+}
+
+.alerts-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.alert-item {
+    padding: var(--space-8);
+    background: var(--mt-bg-panel);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    border-left: 3px solid var(--mt-blue);
+    animation: slideIn 0.3s ease-out;
+}
+
+.alert-item.bullish {
+    border-left-color: var(--mt-green);
+    background: rgba(38, 166, 154, 0.1);
+}
+
+.alert-item.bearish {
+    border-left-color: var(--mt-red);
+    background: rgba(239, 83, 80, 0.1);
+}
+
+.alert-item.warning {
+    border-left-color: var(--mt-orange);
+    background: rgba(255, 152, 0, 0.1);
+}
+
+.alert-empty {
+    text-align: center;
+    color: var(--mt-text-dim);
+    font-size: var(--font-size-xs);
+    padding: var(--space-12);
+}
+
+.alert-time {
+    color: var(--mt-text-dim);
+    font-size: 10px;
+    margin-top: var(--space-4);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Scrollbar styling for coach panel */
+.coach-panel::-webkit-scrollbar,
+.alerts-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.coach-panel::-webkit-scrollbar-track,
+.alerts-container::-webkit-scrollbar-track {
+    background: var(--mt-bg-input);
+}
+
+.coach-panel::-webkit-scrollbar-thumb,
+.alerts-container::-webkit-scrollbar-thumb {
+    background: var(--mt-border);
+    border-radius: 3px;
+}
+
+.coach-panel::-webkit-scrollbar-thumb:hover,
+.alerts-container::-webkit-scrollbar-thumb:hover {
+    background: var(--mt-text-dim);
+}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Coach Panel -->
+        <div class="panel coach-panel">
+            <h2 class="panel-title">🎯 Coach en Tiempo Real</h2>
+            <div class="coach-avatar">👨‍🏫</div>
+            
+            <!-- Market Analysis -->
+            <div class="coach-section">
+                <h3 class="coach-section-title">📊 Análisis de Mercado</h3>
+                <div class="market-analysis">
+                    <div class="analysis-row">
+                        <span class="analysis-label">Tendencia:</span>
+                        <span class="analysis-value" id="trendStatus">CALCULANDO...</span>
+                    </div>
+                    <div class="analysis-row">
+                        <span class="analysis-label">Fuerza:</span>
+                        <span class="analysis-value" id="trendStrength">-</span>
+                    </div>
+                    <div class="analysis-row">
+                        <span class="analysis-label">Volatilidad:</span>
+                        <span class="analysis-value" id="volatilityLevel">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Technical Signals -->
+            <div class="coach-section">
+                <h3 class="coach-section-title">📈 Señales Técnicas</h3>
+                <div id="technicalSignals" class="technical-signals">
+                    <div class="signal-item">Analizando indicadores...</div>
+                </div>
+            </div>
+            
+            <!-- Step-by-Step Guide -->
+            <div class="coach-section">
+                <h3 class="coach-section-title">📋 Guía Paso a Paso</h3>
+                <div id="stepByStepGuide" class="step-guide">
+                    <div class="step-item">Esperando análisis...</div>
+                </div>
+            </div>
+            
+            <!-- Risk Management -->
+            <div class="coach-section">
+                <h3 class="coach-section-title">💰 Estado de Riesgo</h3>
+                <div id="riskManagement" class="risk-management">
+                    <div class="risk-item">Calculando riesgo...</div>
+                </div>
+            </div>
+            
+            <!-- Entry Validation -->
+            <div class="coach-section" id="entryValidationSection" style="display: none;">
+                <h3 class="coach-section-title">✅ Validación de Entrada</h3>
+                <div id="entryValidation" class="entry-validation"></div>
+            </div>
+            
+            <!-- Alerts -->
+            <div class="coach-section">
+                <h3 class="coach-section-title">🔔 Alertas Recientes</h3>
+                <div id="alertsContainer" class="alerts-container">
+                    <div class="alert-empty">Sin alertas recientes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Panel -->
+        <div class="panel account-panel">
+            <h2 class="panel-title">Cuenta</h2>
+            <div class="account-info">
+                <div class="info-row">
+                    <span class="info-label">Balance:</span>
+                    <span class="info-value" id="balance">$10,000.00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Equity:</span>
+                    <span class="info-value" id="equity">$10,000.00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Margen Usado:</span>
+                    <span class="info-value" id="usedMargin">$0.00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Margen Libre:</span>
+                    <span class="info-value" id="freeMargin">$10,000.00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">P&amp;L Abierto:</span>
+                    <span class="info-value" id="openPL">$0.00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Estado:</span>
+                    <span class="info-value positive" id="accountStatus">Operativo</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trading Panel -->
+        <div class="panel trading-panel">
+            <h2 class="panel-title">Panel de Trading</h2>
+            <div class="form-group">
+                <label class="form-label">
+                    Tamaño del Lote
+                    <span class="tooltip-icon" title="Cada lote representa $100,000 en valor nocional">?</span>
+                </label>
+                <input type="number" class="form-input" id="lotSize" value="0.10" step="0.01" min="0.01" max="10">
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    Stop Loss (pips)
+                    <span class="tooltip-icon" title="Esencial para gestión de riesgo. Siempre protege tu cuenta">?</span>
+                </label>
+                <input type="number" class="form-input" id="stopLoss" value="20" step="1" min="1">
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    Take Profit (pips)
+                    <span class="tooltip-icon" title="Define tu objetivo de ganancias">?</span>
+                </label>
+                <input type="number" class="form-input" id="takeProfit" value="30" step="1" min="1">
+            </div>
+            <div class="trade-buttons">
+                <button class="trade-btn buy" id="buyBtn">
+                    <span>▲</span> BUY
+                </button>
+                <button class="trade-btn sell" id="sellBtn">
+                    <span>▼</span> SELL
+                </button>
+            </div>
+            <button class="trade-btn close-all" id="closeAllBtn">
+                <span>✕</span> CERRAR TODAS
+            </button>
+            <div id="messageContainer"></div>
+            <div class="educational-tip" id="educationalTip"></div>
+        </div>
+
+        <!-- Open Positions Panel -->
+        <div class="panel positions-panel">
+            <h2 class="panel-title">Posiciones Abiertas</h2>
+            <div id="positionsContainer">
+                <div class="empty-state">No hay posiciones abiertas</div>
+            </div>
+        </div>
+
+        <!-- Chart Panel -->
+        <div class="panel chart-panel">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="symbol-name">XAUUSD</div>
+                    <div class="current-price" id="currentPrice">4,085.50</div>
+                    <div class="price-change positive" id="priceChange">+0.00%</div>
+                </div>
+                <div class="timeframe-selector">
+                    <button class="timeframe-btn" data-timeframe="1M">1M</button>
+                    <button class="timeframe-btn" data-timeframe="5M">5M</button>
+                    <button class="timeframe-btn active" data-timeframe="15M">15M</button>
+                    <button class="timeframe-btn" data-timeframe="1H">1H</button>
+                    <button class="timeframe-btn" data-timeframe="4H">4H</button>
+                    <button class="timeframe-btn" data-timeframe="1D">1D</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="priceChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="panel history-panel">
+            <h2 class="panel-title">Historial de Operaciones</h2>
+            <div id="historyContainer">
+                <div class="empty-state">No hay operaciones cerradas</div>
+            </div>
+            <div class="stats-summary" id="statsContainer" style="display: none;">
+                <div class="stat-item">
+                    <div class="stat-label">Total Trades</div>
+                    <div class="stat-value" id="totalTrades">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Win Rate</div>
+                    <div class="stat-value" id="winRate">0%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total P&amp;L</div>
+                    <div class="stat-value" id="totalPL">$0.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modify Modal (hidden by default) -->
+    <div id="modifyModal" class="modify-modal" style="display: none;">
+        <div class="modal-content">
+            <h3 class="modal-header">Modificar Posición</h3>
+            <div class="form-group">
+                <label class="form-label">Nuevo Stop Loss (pips)</label>
+                <input type="number" class="form-input" id="modifyStopLoss" step="1">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nuevo Take Profit (pips)</label>
+                <input type="number" class="form-input" id="modifyTakeProfit" step="1">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" id="confirmModifyBtn">Confirmar</button>
+                <button class="modal-btn secondary" id="cancelModifyBtn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Creator Credit Footer -->
+    <div class="creator-footer">
+        <span class="footer-text">GoldTrader Simulator | Built by Manuel Cabrera Garcia <a href="https://twitter.com/maanucg02" target="_blank" class="footer-link">@maanucg02</a></span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
