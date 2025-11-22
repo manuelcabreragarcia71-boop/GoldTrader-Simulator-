@@ -1,2 +1,0 @@
-# GoldTrader-Simulator-
-Simulator GoldTrading 
